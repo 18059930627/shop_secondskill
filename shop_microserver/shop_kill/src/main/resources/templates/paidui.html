@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/js/jquery.js"></script>
+    <script>
+        $(function () {
+            lunxun();
+        })
+
+        /**
+         * 轮询去查询该用户的排名
+         */
+        function lunxun() {
+            $.ajax({
+                type: "get",
+                url: "/kill/getRank",
+                async: false,//同步
+                data: {"gid": [[${gid}]]},
+                success: function (data) {
+                    if (data.code == "200") {
+                        //抢购成功
+                        alert("抢购成功")
+                        location.href = "http://www.baidu.com"
+                    } else {
+                        //还在排队
+                        $("#rank").html(data.msg)
+                    }
+                }
+            })
+
+            //轮询调用
+            setTimeout(function () {
+                lunxun();
+            }, 1000)
+        }
+    </script>
+</head>
+<body>
+<h1>排队中，当前位置：<span id="rank">??</span></h1>
+</body>
+</html>

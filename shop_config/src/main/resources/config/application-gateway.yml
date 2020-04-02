@@ -1,0 +1,64 @@
+server:
+  port: 80
+
+#注册中心唯一标识符
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+
+      routes:
+        #后台工程服务配置路由规则
+        - id: back
+          uri: lb://MICROSERVER-BACK
+          predicates:
+            - Path=/back/**
+          filters:
+            - StripPrefix=1
+          #前台资源服务配置路由规则
+        - id: resources
+          uri: lb://MICROSERVER-RESOURCES
+          predicates:
+            - Path=/css/**,/dialog/**,/images/**,/js/**
+        #sso工程配置路由规则
+        - id: sso
+          uri: lb://MICROSERVER-SSO
+          predicates:
+            - Path=/sso/**,/forget/**
+        #商品秒杀服务配置路由规则
+        - id: kill2
+          uri: lb://MICROSERVER-KILL
+          predicates:
+            - Path=/kill/qiangGou
+          filters:
+            - myCode
+            - myKill
+            - oneOrder
+            - name: RequestRateLimiter
+              args:
+                #限流规则,#{@bean名称}  ip限流 url限流  用户限流
+                key-resolver: '#{@remoteAddrKeyResolver}'
+                #放令牌的速率 1秒5个
+                redis-rate-limiter.replenishRate: 5
+                #令牌桶的容量 总共10个
+                redis-rate-limiter.burstCapacity: 5
+        - id: kill
+          uri: lb://MICROSERVER-KILL
+          predicates:
+            #静态页面
+            - Path=/kill/**,/html/**
+        #前台工程服务配置路由规则,需要放到最后
+        - id: front
+          uri: lb://MICROSERVER-FRONT
+          predicates:
+            - Path=/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                #限流规则,#{@bean名称}  ip限流 url限流  用户限流
+                #key-resolver: '#{@remoteAddrKeyResolver}'
+                #放令牌的速率 1秒5个
+                redis-rate-limiter.replenishRate: 2
+                #令牌桶的容量 总共10个
+                redis-rate-limiter.burstCapacity: 2

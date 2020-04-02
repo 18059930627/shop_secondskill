@@ -1,0 +1,7 @@
+spring:
+  redis:
+    host: 192.168.40.166
+  cache:
+    redis:
+      #redis的有效期为10min
+      time-to-live: 600000

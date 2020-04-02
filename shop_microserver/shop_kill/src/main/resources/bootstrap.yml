@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    config:
+      uri: http://localhost:20000
+      name: application
+      profile: eureka,kill,rabbitmq,redis,thymeleaf
+  rabbitmq:
+    publisher-returns: true
+
+
+
+

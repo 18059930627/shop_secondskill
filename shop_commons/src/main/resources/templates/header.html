@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="myheader">
+    <div class="shop_hd_topNav">
+        <div class="shop_hd_topNav_all">
+            <!-- Header TopNav Left -->
+            <!--TODO 用户登录认证-->
+            <script src="/js/websocket.js"></script>
+            <script>
+                //通过ajax
+                $.ajax({
+                    type: "GET",
+                    url: "/sso/isLogin",
+                    success: function (data) {
+                        if (data.code == "200") {
+                            //用户登录
+                            $("#text").append("<p>" + data.data.username + "您好，欢迎来到<b><a href=\"/\">ShopCZ商城</a><a href=\"/sso/logout\">注销</a></b>")
+
+
+                            initWebSocket({
+                                url: "ws://127.0.0.1:30000/msg",
+                                myopen: function () {
+                                    //进行注册,将uid发送到netty服务器与Channel绑定
+                                    var msg = {"type": 1, "data": data.data.id}
+                                    //发送到服务器
+                                    sendObject(msg);
+                                },
+                                mymessage: function (msgObj) {
+                                    //console.log("自定义的方法接收的信息为:"+JSON.stringify(msgObj))
+                                    //秒杀消息
+                                    if (msgObj.type == 3) {
+                                        alert("提醒消息：您订阅的商品[" + msgObj.data.goods.title + "]即将开抢，请做好准备....");
+                                    }
+                                }
+                            });
+
+
+                        } else {
+                            $("#text").append("[<a onclick='mylogin();'>登录</a>][<a href=\"/sso/toRegister\">注册</a>]</p>")
+                        }
+                    },
+                    dataType: "json"
+                })
+
+                /**
+                 * 登录
+                 */
+                function mylogin() {
+                    var returnUrl = location.href;
+                    returnUrl = encodeURIComponent(returnUrl)
+                    location.href = 'http://localhost:/sso/toLogin?returnUrl=' + returnUrl;
+                }
+
+            </script>
+            <div class="shop_hd_topNav_all_left" id="text">
+
+            </div>
+            <!-- Header TopNav Left End -->
+
+            <!-- Header TopNav Right -->
+            <div class="shop_hd_topNav_all_right">
+                <ul class="topNav_quick_menu">
+
+                    <li>
+                        <div class="topNav_menu">
+                            <a href="#" class="topNavHover">我的商城<i></i></a>
+                            <div class="topNav_menu_bd" style="display:none;">
+                                <ul>
+                                    <li><a title="已买到的商品" target="_top" href="#">已买到的商品</a></li>
+                                    <li><a title="个人主页" target="_top" href="#">个人主页</a></li>
+                                    <li><a title="我的好友" target="_top" href="#">我的好友</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="topNav_menu">
+                            <a href="#" class="topNavHover">卖家中心<i></i></a>
+                            <div class="topNav_menu_bd" style="display:none;">
+                                <ul>
+                                    <li><a title="已售出的商品" target="_top" href="#">已售出的商品</a></li>
+                                    <li><a title="销售中的商品" target="_top" href="#">销售中的商品</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="topNav_menu">
+                            <a href="#" class="topNavHover">购物车<b>0</b>种商品<i></i></a>
+                            <div class="topNav_menu_bd" style="display:none;">
+                                <!--
+                                <ul>
+                                  <li><a title="已售出的商品" target="_top" href="#">已售出的商品</a></li>
+                                  <li><a title="销售中的商品" target="_top" href="#">销售中的商品</a></li>
+                                </ul>
+                                -->
+                                <p>还没有商品，赶快去挑选！</p>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="topNav_menu">
+                            <a href="#" class="topNavHover">我的收藏<i></i></a>
+                            <div class="topNav_menu_bd" style="display:none;">
+                                <ul>
+                                    <li><a title="收藏的商品" target="_top" href="#">收藏的商品</a></li>
+                                    <li><a title="收藏的店铺" target="_top" href="#">收藏的店铺</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="topNav_menu">
+                            <a href="#">站内消息</a>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+            <!-- Header TopNav Right End -->
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+</body>
+</html>

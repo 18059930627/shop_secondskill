@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: microserver-goods
+
+server:
+  port: 9090

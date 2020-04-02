@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    config:
+      uri: http://localhost:20000
+      name: application
+      profile: eureka,datasource,goods,redis,rabbitmq
+
+
+
+
+
+
+
+
+

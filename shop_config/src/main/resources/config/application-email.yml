@@ -1,0 +1,15 @@
+server:
+  port: 10086
+
+spring:
+  application:
+    name: microserver-email
+  mail:
+    #默认发送的邮件是基于smtp协议的
+    protocol: smtp
+    #smtp服务器地址
+    host: smtp.sina.cn
+    #发送方的邮箱
+    username: chenzhongjun666@sina.cn
+    #发送方的密码（授权码）
+    password: 80c45d3b617014d4
